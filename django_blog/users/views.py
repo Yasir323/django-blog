@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegistrationFrom, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -11,6 +12,9 @@ def register(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
+            user = User.objects.filter(username=username).first()
+            user.is_staff = True
+            user.save()
             messages.success(request, f'Your account has been created. You can now Log In.')
             return redirect('login')
     else:

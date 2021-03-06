@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'users.apps.UsersConfig',
     'crispy_forms',
+    'ckeditor_uploader',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -122,11 +124,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static')
+# ]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # This is where our uploaded files will go to inside our computer
 MEDIA_URL = '/media/'  # This is how we're going to access the image in the browser
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# CKEDITOR_UPLOAD_PATH = "uploads/"
 
 LOGIN_REDIRECT_URL = 'blog-home'
 LOGIN_URL = 'login'
@@ -138,3 +146,21 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'yasir.jafri007@gmail.com' # os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = 'jvuynrvcdigzennr' # os.environ.get('EMAIL_PASS')
 # DEFAULT_FROM_EMAIL = 'TestSite Team <noreply@example.com>'
+
+####################################
+##  CKEDITOR CONFIGURATION ##
+####################################
+
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+        'contentsCss': 'img {max-width: 100%;height: auto! important;}',
+    },
+}
+
+###################################

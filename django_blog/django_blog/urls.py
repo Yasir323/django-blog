@@ -47,6 +47,7 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'
          ),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 # Documnet serving is different for development and production servers

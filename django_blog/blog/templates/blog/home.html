@@ -11,7 +11,12 @@
                     <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
                 </div>
                 <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                <p class="article-content">{{ post.content|truncatechars:250 }}</p>
+                <!-- <p class="article-content">{{ post.content|safe|truncatechars:250 }}</p> -->
+                <p class="article-content">
+                    {% with post=post.content|safe %}
+                        {{ post|truncatechars:250 }}
+                    {% endwith %}
+                </p>
             </div>
         </article>
     {% endfor %}
