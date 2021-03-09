@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Post
+from .models import Post, Comment
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from .forms import NewCommentForm
 from django.views.generic import (
     ListView,
     DetailView,
@@ -50,6 +51,23 @@ class PostDetailView(DetailView):
     # So let's create a template with the naming conventions
     # It will be blog/post_detail.html
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        comments_connected = Comment.objects.filter(
+            post=self.get_object()).order_by('-date_added')
+        data['comments'] = comments_connected
+        if self.request.user.is_authenticated:
+            data['comment_form'] = NewCommentForm(instance=self.request.user)
+
+        return data
+
+    def post(self, request, *args, **kwargs):
+        new_comment = Comment(comment=request.POST.get('comment'),
+                                  name=self.request.user,
+                                  post=self.get_object())
+        new_comment.save()
+        return self.get(self, request, *args, **kwargs)
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
