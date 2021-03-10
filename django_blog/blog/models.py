@@ -15,7 +15,7 @@ class Post(models.Model):
     content = RichTextUploadingField()
     date_posted = models.DateTimeField(default=current_time)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    # likes = models.IntegerField()
+    likes = models.ManyToManyField(User, related_name='post_like')
     # share = models.BooleanField()
 
     def __str__(self):
@@ -23,6 +23,9 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+    def number_of_likes(self):
+        return self.likes.count()
 
 
 class Comment(models.Model):

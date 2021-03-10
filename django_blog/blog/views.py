@@ -3,6 +3,8 @@ from .models import Post, Comment
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from .forms import NewCommentForm
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.views.generic import (
     ListView,
     DetailView,
@@ -53,13 +55,19 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-
+        # Comments
         comments_connected = Comment.objects.filter(
             post=self.get_object()).order_by('-date_added')
         data['comments'] = comments_connected
         if self.request.user.is_authenticated:
             data['comment_form'] = NewCommentForm(instance=self.request.user)
-
+        # Likes
+        likes_connected = get_object_or_404(Post, id=self.kwargs['pk'])
+        liked = False
+        if likes_connected.likes.filter(id=self.request.user.id).exists():
+            liked = True
+        data['number_of_likes'] = likes_connected.number_of_likes()
+        data['post_is_liked'] = liked
         return data
 
     def post(self, request, *args, **kwargs):
@@ -68,6 +76,17 @@ class PostDetailView(DetailView):
                                   post=self.get_object())
         new_comment.save()
         return self.get(self, request, *args, **kwargs)
+
+
+def PostLike(request, pk):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+
+    return HttpResponseRedirect(reverse('post-detail', args=[str(pk)]))
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
