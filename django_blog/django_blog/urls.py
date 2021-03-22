@@ -19,6 +19,10 @@ from django.contrib.auth import views as auth_views
 from users import views as user_views
 from django.conf import settings
 from django.conf.urls.static import static
+from ckeditor_uploader import views
+from django.conf.urls import url
+# from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -48,6 +52,10 @@ urlpatterns = [
          name='password_reset_complete'
          ),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    url('upload/', login_required(views.upload), name='ckeditor_upload'),
+    # url('upload/', staff_member_required(views.upload), name='ckeditor_upload'),
+    url('browse/', login_required(views.browse), name='ckeditor_browse'),
+    # url('browse/', staff_member_required(views.browse), name='ckeditor_browse'),
 ]
 
 # Documnet serving is different for development and production servers
